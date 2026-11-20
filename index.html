@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07110d">
+  <meta name="description" content="MIYAD Electronics Shop — LED lights, mobile accessories, chargers and electronics at great prices.">
+  <title>MIYAD Electronics Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="products.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="announcement">বিশ্বস্ত ইলেকট্রনিক্স পণ্য • সহজে WhatsApp-এ অর্ডার করুন</div>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="MIYAD Electronics home">
+      <span class="brand-mark">M</span>
+      <span><strong>MIYAD</strong><small>ELECTRONICS SHOP</small></span>
+    </a>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <a href="#home">হোম</a><a href="#categories">ক্যাটাগরি</a><a href="#products">সব পণ্য</a><a href="#contact">যোগাযোগ</a>
+    </nav>
+    <button class="cart-button" id="cartOpen" type="button" aria-label="কার্ট খুলুন">
+      <span class="cart-icon">🛒</span><span>কার্ট</span><b id="cartCount">0</b>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <span class="eyebrow"><i></i> SMART CHOICE. BETTER VALUE.</span>
+        <h1>প্রযুক্তির পছন্দ<br> <em>আপনার হাতেই।</em></h1>
+        <p>LED লাইট থেকে মোবাইল এক্সেসরিজ—দৈনন্দিন প্রয়োজনের ইলেকট্রনিক্স পণ্য খুঁজে নিন এক জায়গায়।</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#products">পণ্য দেখুন <span>↗</span></a>
+          <a class="button button-ghost" href="#categories">ক্যাটাগরি দেখুন</a>
+        </div>
+        <div class="hero-points"><span>✓ বাছাই করা পণ্য</span><span>✓ সহজ WhatsApp অর্ডার</span></div>
+      </div>
+      <div class="hero-art">
+        <div class="hero-glow"></div>
+        <div class="hero-card hero-card-back"><span>SMART</span><b>TECH</b></div>
+        <div class="hero-product"><img src="https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=900&q=85" alt="Modern electronics display"></div>
+        <div class="floating-tag"><span class="pulse"></span> ELECTRONICS, MADE SIMPLE</div>
+        <div class="hero-orbit"></div>
+      </div>
+    </section>
+
+    <section class="benefits">
+      <div><span class="benefit-icon">✦</span><span><b>পছন্দের কালার</b><small>পণ্যভেদে কালার বেছে নিন</small></span></div>
+      <div><span class="benefit-icon">৳</span><span><b>দাম আগে থেকেই দেখুন</b><small>পণ্যের সঙ্গে মূল্য দেওয়া আছে</small></span></div>
+      <div><span class="benefit-icon">☏</span><span><b>সহজ অর্ডার</b><small>WhatsApp-এ অর্ডার পাঠান</small></span></div>
+    </section>
+
+    <section class="section category-section" id="categories">
+      <div class="section-heading"><div><span class="eyebrow">EXPLORE COLLECTIONS</span><h2>ক্যাটাগরি অনুযায়ী <em>কিনুন</em></h2></div><p>আপনার প্রয়োজনের পণ্যটি খুঁজে নিন সহজেই।</p></div>
+      <div class="category-grid" id="categoryGrid"></div>
+    </section>
+
+    <section class="section products-section" id="products">
+      <div class="section-heading product-heading"><div><span class="eyebrow">OUR PRODUCTS</span><h2>জনপ্রিয় <em>পণ্যসমূহ</em></h2></div>
+        <div class="product-tools">
+          <label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="পণ্য খুঁজুন..." aria-label="পণ্য খুঁজুন"></label>
+          <select id="sortSelect" aria-label="পণ্য সাজান"><option value="default">ডিফল্ট</option><option value="low">দাম: কম থেকে বেশি</option><option value="high">দাম: বেশি থেকে কম</option></select>
+        </div>
+      </div>
+      <div class="filter-row" id="filterRow"></div>
+      <div class="product-grid" id="productGrid" aria-live="polite"></div>
+      <p class="empty-state hidden" id="emptyState">এই নামে কোনো পণ্য পাওয়া যায়নি।</p>
+    </section>
+
+    <section class="contact-banner" id="contact">
+      <div><span class="eyebrow">NEED HELP?</span><h2>পণ্য সম্পর্কে জানতে চান?</h2><p>WhatsApp-এ আমাদের সঙ্গে কথা বলুন।</p></div>
+      <a class="button button-primary" href="https://wa.me/8801957835577" target="_blank" rel="noopener">WhatsApp-এ কথা বলুন ↗</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="brand" href="#"><span class="brand-mark">M</span><span><strong>MIYAD</strong><small>ELECTRONICS SHOP</small></span></a>
+    <p>আপনার প্রয়োজনের ইলেকট্রনিক্স, এক ঠিকানায়।</p>
+    <div class="footer-bottom"><span>© <span id="year"></span> MIYAD Electronics Shop</span><a href="https://wa.me/8801957835577" target="_blank" rel="noopener">WhatsApp: 01957835577</a></div>
+  </footer>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart" aria-hidden="true">
+    <div class="drawer-header"><div><span class="eyebrow">YOUR SELECTION</span><h2>আপনার কার্ট</h2></div><button class="icon-button" id="cartClose" aria-label="বন্ধ করুন">✕</button></div>
+    <div class="cart-items" id="cartItems"><p class="cart-empty">আপনার কার্ট এখনো খালি।</p></div>
+    <div class="cart-footer"><div class="cart-total"><span>সর্বমোট</span><strong id="cartTotal">৳০</strong></div><button class="button button-primary checkout-button" id="checkoutButton">WhatsApp-এ অর্ডার করুন ↗</button><small>অর্ডার পাঠানোর আগে WhatsApp-এ তথ্য যাচাই করে নিন।</small></div>
+  </aside>
+  <div class="toast" id="toast" role="status"></div>
+</body>
+</html>
