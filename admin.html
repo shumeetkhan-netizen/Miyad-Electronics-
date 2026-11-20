@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07110d">
+  <title>MIYAD Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{min-height:100vh;background:#f2f5f2}.admin-wrap{max-width:960px;margin:28px auto;padding:0 15px}
+    .admin-panel{background:#fff;border:1px solid #e1e8e2;border-radius:16px;padding:20px;margin:16px 0}
+    .admin-panel h1,.admin-panel h2{margin:0 0 14px}.admin-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .admin-form label{display:block;font-size:13px;color:#536057}.admin-form input,.admin-form textarea{width:100%;padding:10px;border:1px solid #dce4dd;border-radius:8px;margin-top:5px;background:#fff}
+    .admin-form textarea{min-height:70px}.wide{grid-column:1/-1}.admin-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:13px}
+    .secondary,.admin-product button{border:1px solid #dce4dd;background:white;border-radius:8px;padding:9px 12px;cursor:pointer}
+    .danger{color:#a52d2d}.status{padding:10px;border-radius:8px;background:#eff7e9;color:#315d22;margin:12px 0}
+    .admin-products{display:grid;gap:9px}.admin-product{border:1px solid #e5ebe5;border-radius:10px;padding:12px;display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .admin-product small{display:block;color:#6b776e}.hidden{display:none!important}
+    @media(max-width:600px){.admin-form{grid-template-columns:1fr}.admin-product{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="admin-wrap">
+    <header style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <a class="brand" href="index.html"><span class="brand-mark">M</span><span><strong>MIYAD</strong><small>ADMIN PANEL</small></span></a>
+      <a href="index.html">← দোকানে ফিরে যান</a>
+    </header>
+    <section class="admin-panel" id="loginPanel">
+      <h1>Admin Login</h1>
+      <p>অনুমোদিত অ্যাডমিন ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।</p>
+      <form id="loginForm" class="admin-form">
+        <label class="wide">ইমেইল<input id="email" type="email" autocomplete="username" required></label>
+        <label class="wide">পাসওয়ার্ড<input id="password" type="password" autocomplete="current-password" required></label>
+        <div class="wide"><button class="button button-primary" type="submit">লগইন</button></div>
+      </form>
+    </section>
+    <section id="dashboard" class="hidden">
+      <div class="admin-panel">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+          <div><h1>পণ্য পরিচালনা</h1><small id="signedInAs"></small></div>
+          <button id="logout" class="secondary">লগআউট</button>
+        </div>
+        <div id="notice" class="status hidden" role="status"></div>
+        <div class="admin-actions">
+          <button id="importProducts" class="secondary" type="button">পুরোনো ৮টি পণ্য Firestore-এ যোগ করুন</button>
+        </div>
+        <form id="productForm">
+          <h2 id="formTitle" style="margin-top:20px">নতুন পণ্য যোগ করুন</h2>
+          <div class="admin-form">
+            <label>পণ্যের ID<input id="pId" required placeholder="যেমন: led-20w"></label>
+            <label>পণ্যের নাম<input id="pName" required></label>
+            <label>মডেল<input id="pModel"></label>
+            <label>ক্যাটাগরি<input id="pCategory" required placeholder="LED Light"></label>
+            <label>দাম (টাকা)<input id="pPrice" type="number" min="0" required></label>
+            <label>স্টক<input id="pStock" type="number" min="0" value="0" required></label>
+            <label class="wide">ছবির URL<input id="pImage" type="url" placeholder="https://..."></label>
+            <label class="wide">কালার (কমা দিয়ে আলাদা করুন)<input id="pColors" placeholder="Black, White"></label>
+            <label class="wide">বর্ণনা<textarea id="pDescription"></textarea></label>
+          </div>
+          <div class="admin-actions"><button class="button button-primary" type="submit" id="saveProduct">পণ্য সংরক্ষণ</button><button class="secondary" type="button" id="resetForm">ফর্ম খালি করুন</button></div>
+        </form>
+      </div>
+      <div class="admin-panel"><h2>বর্তমান পণ্য</h2><div id="productList" class="admin-products">লোড হচ্ছে...</div></div>
+    </section>
+  </div>
+  <script src="products.js"></script>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>
