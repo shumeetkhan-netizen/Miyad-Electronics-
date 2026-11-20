@@ -1,4 +1,5 @@
 
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
 import {
@@ -21,7 +22,7 @@ import {
 import { firebaseConfig } from "./firebase-config.js";
 import { PRODUCTS } from "./products.js";
 
-// Firebase চালু
+// Firebase Initialize
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -31,16 +32,21 @@ const $ = id => document.getElementById(id);
 let products = [];
 let stopListening = null;
 
-// Message দেখানো
+// Notification
 function notice(message, error = false) {
-  $("notice").textContent = message;
-  $("notice").classList.remove("hidden");
+  const box = $("notice");
 
-  $("notice").style.background = error ? "#fff0f0" : "#eff7e9";
-  $("notice").style.color = error ? "#9a2525" : "#315d22";
+  if (box) {
+    box.textContent = message;
+    box.classList.remove("hidden");
+    box.style.background = error ? "#fff0f0" : "#eff7e9";
+    box.style.color = error ? "#9a2525" : "#315d22";
+  } else {
+    alert(message);
+  }
 }
 
-// HTML নিরাপদ রাখা
+// নিরাপদ HTML Text
 function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
     "&": "&amp;",
@@ -51,9 +57,10 @@ function esc(value) {
   }[c]));
 }
 
-// Form খালি করা
+// Form Reset
 function resetForm() {
   $("productForm").reset();
+
   $("pStock").value = "0";
   $("pId").readOnly = false;
 
@@ -61,13 +68,15 @@ function resetForm() {
   $("saveProduct").textContent = "পণ্য সংরক্ষণ";
 }
 
-// পণ্যের তালিকা দেখানো
+// Product List
 function renderProducts() {
   $("productList").innerHTML = products.length
     ? products.map(p => `
       <article class="admin-product">
+
         <div>
           <b>${esc(p.name)}</b>
+
           <small>
             ID: ${esc(p.id)}
             · দাম: ৳${Number(p.price || 0).toLocaleString("bn-BD")}
@@ -76,25 +85,36 @@ function renderProducts() {
         </div>
 
         <div class="admin-actions">
-          <button type="button" data-edit="${esc(p.id)}">Edit</button>
-          <button type="button" class="danger" data-delete="${esc(p.id)}">Delete</button>
+          <button type="button" data-edit="${esc(p.id)}">
+            Edit
+          </button>
+
+          <button type="button" class="danger" data-delete="${esc(p.id)}">
+            Delete
+          </button>
         </div>
+
       </article>
     `).join("")
-    : "<p>এখনো কোনো পণ্য নেই। পুরোনো পণ্য Import করুন অথবা নতুন পণ্য যোগ করুন।</p>";
+    : "<p>এখনো কোনো পণ্য নেই।</p>";
 
   $("productList").querySelectorAll("[data-edit]").forEach(button => {
-    button.addEventListener("click", () => editProduct(button.dataset.edit));
+    button.addEventListener("click", () => {
+      editProduct(button.dataset.edit);
+    });
   });
 
   $("productList").querySelectorAll("[data-delete]").forEach(button => {
-    button.addEventListener("click", () => removeProduct(button.dataset.delete));
+    button.addEventListener("click", () => {
+      removeProduct(button.dataset.delete);
+    });
   });
 }
 
-// পণ্য Edit
+// Edit Product
 function editProduct(id) {
-  const p = products.find(x => x.id === id);
+  const p = products.find(item => item.id === id);
+
   if (!p) return;
 
   $("pId").value = p.id;
@@ -103,57 +123,105 @@ function editProduct(id) {
   $("pName").value = p.name || "";
   $("pModel").value = p.model || "";
   $("pCategory").value = p.category || "";
+
   $("pPrice").value = p.price ?? 0;
   $("pStock").value = p.stock ?? 0;
-  $("pImage").value = p.image || "";
 
+  $("pImage").value = p.image || "";
   $("pColors").value = (p.colors || []).join(", ");
   $("pDescription").value = p.description || "";
 
   $("formTitle").textContent = "পণ্য পরিবর্তন করুন";
   $("saveProduct").textContent = "পরিবর্তন সংরক্ষণ";
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
-// পণ্য Delete
+// Delete Product
 async function removeProduct(id) {
   if (!confirm("এই পণ্যটি মুছে ফেলবেন?")) return;
 
   try {
     await deleteDoc(doc(db, "products", id));
+
     notice("পণ্য মুছে ফেলা হয়েছে।");
+
   } catch (error) {
-    notice("মুছতে সমস্যা: " + error.message, true);
+    notice("Delete Error: " + error.message, true);
   }
 }
 
-// Admin Login
+// ADMIN LOGIN
 $("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
+
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  const button = $("loginForm").querySelector('button[type="submit"]');
+
+  button.disabled = true;
+  button.textContent = "লগইন হচ্ছে...";
 
   try {
     await signInWithEmailAndPassword(
       auth,
-      $("email").value.trim(),
-      $("password").value
+      email,
+      password
     );
+
+    alert("Login সফল হয়েছে!");
+
   } catch (error) {
-    notice(
-      "লগইন হয়নি। Email/Password Authentication চালু আছে কি না দেখুন। (" +
-      error.code + ")",
-      true
-    );
+
+    let message = "লগইন হয়নি: " + error.code;
+
+    if (
+      error.code === "auth/invalid-credential" ||
+      error.code === "auth/wrong-password"
+    ) {
+      message = "ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে।";
+
+    } else if (error.code === "auth/user-not-found") {
+      message = "এই ইমেইলে Admin Account পাওয়া যায়নি।";
+
+    } else if (error.code === "auth/invalid-email") {
+      message = "সঠিক Email লিখুন।";
+
+    } else if (error.code === "auth/network-request-failed") {
+      message = "ইন্টারনেট সংযোগ পরীক্ষা করুন।";
+
+    } else if (error.code === "auth/too-many-requests") {
+      message = "অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে চেষ্টা করুন।";
+
+    } else if (error.code === "auth/operation-not-allowed") {
+      message = "Firebase Authentication-এ Email/Password চালু করুন।";
+    }
+
+    alert(message);
+
+  } finally {
+    button.disabled = false;
+    button.textContent = "লগইন";
   }
 });
 
-// Logout
-$("logout").addEventListener("click", () => signOut(auth));
+// ADMIN LOGOUT
+$("logout").addEventListener("click", async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    notice("Logout Error: " + error.message, true);
+  }
+});
 
-// Form Reset
+// Reset Button
 $("resetForm").addEventListener("click", resetForm);
 
-// নতুন পণ্য যোগ এবং Update
+// ADD / UPDATE PRODUCT
 $("productForm").addEventListener("submit", async event => {
   event.preventDefault();
 
@@ -161,76 +229,96 @@ $("productForm").addEventListener("submit", async event => {
 
   if (!/^[a-zA-Z0-9_-]+$/.test(id)) {
     return notice(
-      "ID-তে ইংরেজি অক্ষর, সংখ্যা, - অথবা _ ব্যবহার করুন।",
+      "Product ID-তে ইংরেজি অক্ষর, সংখ্যা, - অথবা _ ব্যবহার করুন।",
       true
     );
   }
 
   const p = {
-    id,
+    id: id,
+
     name: $("pName").value.trim(),
     model: $("pModel").value.trim(),
     category: $("pCategory").value.trim(),
+
     price: Number($("pPrice").value),
     stock: Number($("pStock").value),
+
     image: $("pImage").value.trim(),
+
     colors: $("pColors").value
       .split(",")
       .map(x => x.trim())
       .filter(Boolean),
+
     description: $("pDescription").value.trim()
   };
 
   try {
-    await setDoc(doc(db, "products", id), p);
+    await setDoc(
+      doc(db, "products", id),
+      p
+    );
 
-    notice("পণ্য সংরক্ষণ হয়েছে।");
+    notice("পণ্য সফলভাবে সংরক্ষণ হয়েছে!");
+
     resetForm();
 
   } catch (error) {
-    notice("সংরক্ষণ হয়নি: " + error.message, true);
+    notice("Save Error: " + error.message, true);
   }
 });
 
-// পুরোনো ৮টি পণ্য Import
+// IMPORT OLD PRODUCTS
 $("importProducts").addEventListener("click", async () => {
+
   if (!Array.isArray(PRODUCTS) || !PRODUCTS.length) {
     return notice("products.js থেকে পণ্য পাওয়া যায়নি।", true);
   }
 
-  if (!confirm(
-    "পুরোনো পণ্যগুলো Firestore-এ যোগ হবে। একই ID থাকলে সেই পণ্যের তথ্য আপডেট হবে এবং স্টক 0 হবে। চালাবেন?"
-  )) return;
+  const confirmed = confirm(
+    "পুরোনো ৮টি পণ্য Firestore-এ যোগ হবে। একই ID থাকলে আগের তথ্য ও স্টক পরিবর্তিত হতে পারে। চালাবেন?"
+  );
+
+  if (!confirmed) return;
 
   try {
     const batch = writeBatch(db);
 
     PRODUCTS.forEach(p => {
-      batch.set(doc(db, "products", p.id), {
-        ...p,
-        stock: 0
-      });
+      batch.set(
+        doc(db, "products", p.id),
+        {
+          ...p,
+          stock: 0
+        }
+      );
     });
 
     await batch.commit();
 
     notice(
-      "পুরোনো " + PRODUCTS.length +
-      "টি পণ্য Firestore-এ যোগ হয়েছে।"
+      PRODUCTS.length + "টি পণ্য Firestore-এ যোগ হয়েছে!"
     );
 
   } catch (error) {
-    notice("Import হয়নি: " + error.message, true);
+    notice("Import Error: " + error.message, true);
   }
 });
 
-// Login Status এবং Live Product Sync
+// FIREBASE LOGIN STATUS
 onAuthStateChanged(auth, user => {
+
   $("loginPanel").classList.toggle("hidden", !!user);
+
   $("dashboard").classList.toggle("hidden", !user);
 
   if (!user) {
-    if (stopListening) stopListening();
+
+    if (stopListening) {
+      stopListening();
+    }
+
     stopListening = null;
     return;
   }
@@ -238,14 +326,21 @@ onAuthStateChanged(auth, user => {
   $("signedInAs").textContent =
     "লগইন: " + (user.email || "Admin");
 
-  if (stopListening) stopListening();
+  if (stopListening) {
+    stopListening();
+  }
 
+  // LIVE FIRESTORE PRODUCTS
   stopListening = onSnapshot(
     collection(db, "products"),
 
     snapshot => {
+
       products = snapshot.docs
-        .map(d => ({ id: d.id, ...d.data() }))
+        .map(d => ({
+          id: d.id,
+          ...d.data()
+        }))
         .sort((a, b) =>
           (a.name || "").localeCompare(b.name || "")
         );
@@ -254,7 +349,11 @@ onAuthStateChanged(auth, user => {
     },
 
     error => {
-      notice("ডেটা পড়তে সমস্যা: " + error.message, true);
+      notice(
+        "Firestore Error: " + error.message,
+        true
+      );
     }
   );
+
 });
